@@ -1,50 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jasper AdSense Test - Modern Web Experiments</title>
+    <title>명언의 정원 - 전세계 위인들의 명언 모음</title>
+    <meta name="description" content="아인슈타인, 간디, 공자, 스티브 잡스 등 전세계 위인들의 영감을 주는 명언을 카테고리별로 모아놓은 사이트입니다.">
+    <meta name="keywords" content="명언, 격언, 위인 명언, 인생 명언, 동기부여, 성공 명언, 사랑 명언">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <app-header title="Jasper AdSense"></app-header>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="#" class="logo">명언의 정원</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#daily" data-nav="daily">오늘의 명언</a></li>
+                    <li><a href="#categories" data-nav="categories">카테고리</a></li>
+                    <li><a href="#people" data-nav="people">인물별</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn" aria-label="메뉴 열기">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
 
-    <main class="container">
-        <section class="hero">
-            <h1>Testing Google AdSense Integration</h1>
-            <p>A modern, lightweight web application for testing advertising performance and layout integration.</p>
+    <main>
+        <!-- Hero / Daily Quote -->
+        <section class="hero" id="daily">
+            <div class="container">
+                <p class="hero-label">오늘의 명언</p>
+                <blockquote class="hero-quote" id="dailyQuote">
+                    <p id="dailyQuoteText"></p>
+                    <footer id="dailyQuoteAuthor"></footer>
+                </blockquote>
+                <button class="btn-refresh" id="newQuoteBtn">다른 명언 보기</button>
+            </div>
         </section>
 
-        <div class="content-grid">
-            <div class="main-content">
-                <article-card 
-                    title="The Future of Web Components" 
-                    excerpt="Discover how native custom elements are revolutionizing the way we build modern web applications without heavy frameworks.">
-                </article-card>
-                
-                <!-- Ad Placeholder -->
-                <adsense-placeholder type="in-feed"></adsense-placeholder>
-
-                <article-card 
-                    title="Modern CSS Baseline" 
-                    excerpt="Leveraging container queries, :has() selector, and cascade layers to create more resilient and maintainable stylesheets.">
-                </article-card>
-            </div>
-
-            <aside class="sidebar">
-                <adsense-placeholder type="sidebar"></adsense-placeholder>
-                <div class="sidebar-box">
-                    <h3>About This Test</h3>
-                    <p>This site is deployed to Cloudflare Pages for rapid testing and iteration of AdSense placements.</p>
+        <!-- Search -->
+        <section class="search-section">
+            <div class="container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="명언 또는 인물을 검색하세요..." autocomplete="off">
+                    <button id="searchBtn">검색</button>
                 </div>
-            </aside>
+                <div id="searchResults" class="search-results" style="display:none;"></div>
+            </div>
+        </section>
+
+        <!-- Ad Placeholder 1 -->
+        <div class="container ad-container">
+            <div class="ad-placeholder">
+                <span class="ad-label">광고 영역</span>
+                <span class="ad-sub">Google AdSense - 리더보드 (728x90)</span>
+            </div>
         </div>
+
+        <!-- Categories -->
+        <section class="categories-section" id="categories">
+            <div class="container">
+                <h2 class="section-title">카테고리별 명언</h2>
+                <div class="category-tabs" id="categoryTabs"></div>
+                <div class="quotes-grid" id="categoryQuotes"></div>
+            </div>
+        </section>
+
+        <!-- Ad Placeholder 2 -->
+        <div class="container ad-container">
+            <div class="ad-placeholder">
+                <span class="ad-label">광고 영역</span>
+                <span class="ad-sub">Google AdSense - 인피드 광고</span>
+            </div>
+        </div>
+
+        <!-- People Section -->
+        <section class="people-section" id="people">
+            <div class="container">
+                <h2 class="section-title">인물별 명언</h2>
+                <div class="people-grid" id="peopleGrid"></div>
+            </div>
+        </section>
+
+        <!-- Selected Person Quotes -->
+        <section class="person-quotes-section" id="personQuotes" style="display:none;">
+            <div class="container">
+                <button class="btn-back" id="backToPeople">← 인물 목록으로</button>
+                <div class="person-header" id="personHeader"></div>
+                <div class="quotes-list" id="personQuotesList"></div>
+            </div>
+        </section>
+
+        <!-- Ad Placeholder 3 -->
+        <div class="container ad-container">
+            <div class="ad-placeholder">
+                <span class="ad-label">광고 영역</span>
+                <span class="ad-sub">Google AdSense - 디스플레이 광고 (336x280)</span>
+            </div>
+        </div>
+
+        <!-- All Quotes -->
+        <section class="all-quotes-section" id="allQuotes">
+            <div class="container">
+                <h2 class="section-title">전체 명언</h2>
+                <div class="quotes-masonry" id="allQuotesGrid"></div>
+                <button class="btn-load-more" id="loadMoreBtn">더 보기</button>
+            </div>
+        </section>
     </main>
 
-    <app-footer></app-footer>
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <p class="footer-logo">명언의 정원</p>
+                    <p class="footer-desc">전세계 위인들의 지혜와 영감을 한곳에 모았습니다.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>카테고리</h4>
+                    <ul id="footerCategories"></ul>
+                </div>
+                <div class="footer-links">
+                    <h4>바로가기</h4>
+                    <ul>
+                        <li><a href="#daily">오늘의 명언</a></li>
+                        <li><a href="#categories">카테고리</a></li>
+                        <li><a href="#people">인물별</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 명언의 정원. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
     <script type="module" src="main.js"></script>
 </body>
