@@ -370,6 +370,38 @@ function setupMobileMenu() {
     });
 }
 
+// ===== STRUCTURED DATA FOR SEO =====
+function injectQuotationSchema() {
+    const schemaQuotes = quotes.slice(0, 20).map(q => ({
+        "@type": "Quotation",
+        "text": q.text,
+        "spokenByCharacter": {
+            "@type": "Person",
+            "name": q.author,
+            "alternateName": q.authorEn,
+            "description": q.desc
+        },
+        "about": q.category,
+        "description": q.commentary
+    }));
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "명언 모음 - 전세계 위인들의 명언",
+        "description": "인생 명언, 성공 명언, 사랑 명언, 동기부여 명언 등 전세계 위인들의 명언 모음",
+        "numberOfItems": quotes.length,
+        "itemListElement": schemaQuotes.map((q, i) => ({
+            "@type": "ListItem",
+            "position": i + 1,
+            "item": q
+        }))
+    });
+    document.head.appendChild(script);
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
     showDailyQuote();
@@ -379,6 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderAllQuotes();
     renderFooterCategories();
     setupMobileMenu();
+    injectQuotationSchema();
 
     document.getElementById('newQuoteBtn').addEventListener('click', showDailyQuote);
     document.getElementById('loadMoreBtn').addEventListener('click', () => renderAllQuotes(true));

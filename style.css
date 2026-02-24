@@ -769,6 +769,88 @@ body {
     font-weight: 600;
 }
 
+/* ===== SEO SECTIONS ===== */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.seo-intro {
+    padding: 2.5rem 0 0.5rem;
+    text-align: center;
+}
+
+.seo-intro-title {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+}
+
+.seo-intro-text {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    max-width: 750px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+
+.section-desc {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: -1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.seo-bottom {
+    padding: 4rem 0;
+    background: var(--card-bg);
+}
+
+.seo-bottom h2 {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: var(--text);
+}
+
+.seo-topics {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.seo-topic {
+    padding: 1.5rem;
+    background: var(--bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+}
+
+.seo-topic h3 {
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+    color: var(--primary-dark);
+}
+
+.seo-topic p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
     .quotes-masonry { columns: 2; }
