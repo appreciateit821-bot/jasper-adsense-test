@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jasper-adsense-test.pages.dev/sitemap.xml
