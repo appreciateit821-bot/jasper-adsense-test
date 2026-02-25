@@ -998,6 +998,12 @@ function showDailyQuote() {
     document.getElementById('dailyQuoteAuthor').textContent = `${q.author} (${p.nameEn || ''}) — ${p.desc || ''}`;
 }
 
+// ===== INIT KAKAO =====
+if (typeof Kakao !== 'undefined') {
+    // Note: User should replace with their own JavaScript Key
+    Kakao.init('YOUR_KAKAO_APP_KEY'); 
+}
+
 // ===== QUOTE CARD COMPONENT =====
 class QuoteCard extends HTMLElement {
     set quoteData(q) {
@@ -1014,12 +1020,12 @@ class QuoteCard extends HTMLElement {
             <div class="quote-actions">
                 <button class="like-btn ${liked ? 'liked' : ''}" data-qid="${qId}" aria-label="좋아요">
                     <span class="like-icon">${liked ? '\u2764\uFE0F' : '\u2661'}</span>
-                    <span class="like-label">${liked ? '좋아요 취소' : '좋아요'}</span>
+                    <span class="like-label">${liked ? '좋아요' : '좋아요'}</span>
                 </button>
                 <div class="share-buttons">
-                    <button class="share-btn share-btn-twitter" title="X(트위터)에 공유" aria-label="X에 공유">𝕏</button>
-                    <button class="share-btn share-btn-copy" title="명언 텍스트 복사" aria-label="복사">🔗</button>
-                    <button class="share-btn share-btn-image" title="이미지 카드 만들기" aria-label="이미지 카드">🖼</button>
+                    <button class="share-btn share-btn-kakao" title="카카오톡 공유" aria-label="카카오톡 공유">💬</button>
+                    <button class="share-btn share-btn-instagram" title="인스타그램/이미지 저장" aria-label="이미지 저장">📸</button>
+                    <button class="share-btn share-btn-copy" title="텍스트 복사" aria-label="복사">🔗</button>
                 </div>
             </div>
             <div class="quote-footer">
@@ -1037,15 +1043,14 @@ class QuoteCard extends HTMLElement {
             const isNowLiked = toggleLike(qId);
             btn.classList.toggle('liked', isNowLiked);
             btn.querySelector('.like-icon').textContent = isNowLiked ? '\u2764\uFE0F' : '\u2661';
-            btn.querySelector('.like-label').textContent = isNowLiked ? '좋아요 취소' : '좋아요';
             updateLikeCounter();
             refreshIfLikedTabActive();
         });
 
         // Share buttons
-        this.querySelector('.share-btn-twitter').addEventListener('click', () => shareToTwitter(q));
+        this.querySelector('.share-btn-kakao').addEventListener('click', () => shareToKakao(q));
+        this.querySelector('.share-btn-instagram').addEventListener('click', () => showImageCardModal(q));
         this.querySelector('.share-btn-copy').addEventListener('click', (e) => copyQuoteText(q, e.currentTarget));
-        this.querySelector('.share-btn-image').addEventListener('click', () => showImageCardModal(q));
 
         // Author click -> person detail
         this.querySelectorAll('.author-link, .author-avatar').forEach(el => {
@@ -1341,23 +1346,47 @@ function injectQuotationSchema() {
 }
 
 // ===== SHARE FUNCTIONS =====
-function shareToTwitter(q) {
-    const text = `"${q.text}" — ${q.author}`;
-    const url = 'https://jasper-adsense-test.pages.dev/';
-    const hashtags = '명언,명언의정원';
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}&hashtags=${encodeURIComponent(hashtags)}`;
-    window.open(twitterUrl, '_blank', 'width=600,height=400,noopener');
+function shareToKakao(q) {
+    if (typeof Kakao === 'undefined') return;
+    
+    // Fallback if Kakao is not initialized with a real key
+    if (!Kakao.isInitialized()) {
+        alert('카카오 공유를 위해 App Key 설정이 필요합니다.');
+        return;
+    }
+
+    const p = people[q.author] || {};
+    Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+            title: `[명언] ${q.author}`,
+            description: q.text,
+            imageUrl: 'https://jasper-adsense-test.pages.dev/og-image.png', // Placeholder
+            link: {
+                mobileWebUrl: window.location.href,
+                webUrl: window.location.href,
+            },
+        },
+        buttons: [
+            {
+                title: '명언 더 보기',
+                link: {
+                    mobileWebUrl: window.location.href,
+                    webUrl: window.location.href,
+                },
+            },
+        ],
+    });
 }
 
 function copyQuoteText(q, btn) {
-    const text = `"${q.text}"\n— ${q.author}`;
+    const text = `"${q.text}"\n— ${q.author}\n\n[명언의 정원] https://jasper-adsense-test.pages.dev/`;
     navigator.clipboard.writeText(text).then(() => {
         const prev = btn.textContent;
         btn.textContent = '✓';
         btn.style.color = '#10b981';
         setTimeout(() => { btn.textContent = prev; btn.style.color = ''; }, 1600);
     }).catch(() => {
-        // Fallback for clipboard API unavailable
         const ta = document.createElement('textarea');
         ta.value = text;
         ta.style.position = 'fixed';
@@ -1386,18 +1415,19 @@ function showImageCardModal(q) {
         _imageCardModal.className = 'image-card-modal';
         _imageCardModal.innerHTML = `
             <div class="image-card-modal-inner">
-                <h3 class="modal-title">📸 이미지 카드 만들기</h3>
+                <h3 class="modal-title">📸 명언 책갈피 만들기</h3>
                 <div class="theme-selector">
                     <button class="theme-btn active" data-theme="dark">🌙 어두운</button>
                     <button class="theme-btn" data-theme="gradient">✨ 그라데이션</button>
-                    <button class="theme-btn" data-theme="light">☀️ 밝은</button>
+                    <button class="theme-btn" data-theme="warm">🍂 따뜻한</button>
+                    <button class="theme-btn" data-theme="minimal">⚪ 심플</button>
                 </div>
                 <div class="canvas-wrapper">
-                    <canvas class="quote-canvas" width="1080" height="1080"></canvas>
+                    <canvas class="quote-canvas" width="1080" height="1350"></canvas>
                 </div>
+                <p style="color: #9ca3af; font-size: 0.8rem; text-align: center; margin-bottom: 1rem;">1080x1350 사이즈로 인스타그램 피드에 최적화되어 있습니다.</p>
                 <div class="modal-actions">
                     <button class="btn-download-card">⬇ 이미지 저장</button>
-                    <button class="btn-share-twitter">𝕏 트위터 공유</button>
                     <button class="btn-close-modal">닫기</button>
                 </div>
             </div>
@@ -1416,21 +1446,14 @@ function showImageCardModal(q) {
         _imageCardModal.querySelector('.btn-download-card').addEventListener('click', () => {
             const canvas = _imageCardModal.querySelector('.quote-canvas');
             const link = document.createElement('a');
-            link.download = `명언_${_currentCardQuote.author}.png`;
+            link.download = `명언책갈피_${_currentCardQuote.author}.png`;
             link.href = canvas.toDataURL('image/png');
             link.click();
-        });
-
-        _imageCardModal.querySelector('.btn-share-twitter').addEventListener('click', () => {
-            shareToTwitter(_currentCardQuote);
         });
 
         _imageCardModal.querySelector('.btn-close-modal').addEventListener('click', _closeImageCardModal);
         _imageCardModal.addEventListener('click', (e) => {
             if (e.target === _imageCardModal) _closeImageCardModal();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') _closeImageCardModal();
         });
     }
 
@@ -1447,19 +1470,20 @@ function _closeImageCardModal() {
 }
 
 function _wrapText(ctx, text, maxWidth) {
-    const chars = [...text];
+    const words = text.split(' ');
     const lines = [];
     let line = '';
-    for (const ch of chars) {
-        const test = line + ch;
-        if (ctx.measureText(test).width > maxWidth && line.length > 0) {
+
+    for (const word of words) {
+        const test = line + (line ? ' ' : '') + word;
+        if (ctx.measureText(test).width > maxWidth) {
             lines.push(line);
-            line = ch;
+            line = word;
         } else {
             line = test;
         }
     }
-    if (line) lines.push(line);
+    lines.push(line);
     return lines;
 }
 
@@ -1467,76 +1491,115 @@ function _drawImageCard(q, theme = 'dark') {
     const canvas = _imageCardModal.querySelector('.quote-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const W = 1080, H = 1080;
-    const isLight = theme === 'light';
+    const W = 1080, H = 1350;
+    
+    // Background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
 
-    // Background gradient
     const grad = ctx.createLinearGradient(0, 0, W, H);
+    let textColor = '#ffffff';
+    let accentColor = '#fbbf24';
+    let ribbonColor = '#2563eb';
+
     if (theme === 'dark') {
-        grad.addColorStop(0, '#0f0c29');
-        grad.addColorStop(0.5, '#302b63');
-        grad.addColorStop(1, '#24243e');
+        grad.addColorStop(0, '#1e293b');
+        grad.addColorStop(1, '#0f172a');
+        textColor = '#f8fafc';
     } else if (theme === 'gradient') {
-        grad.addColorStop(0, '#4776e6');
-        grad.addColorStop(1, '#8e54e9');
-    } else {
-        grad.addColorStop(0, '#f0f4ff');
-        grad.addColorStop(1, '#e2e8f0');
+        grad.addColorStop(0, '#4f46e5');
+        grad.addColorStop(1, '#7c3aed');
+        textColor = '#ffffff';
+        accentColor = '#60a5fa';
+    } else if (theme === 'warm') {
+        grad.addColorStop(0, '#fef3c7');
+        grad.addColorStop(1, '#fbbf24');
+        textColor = '#78350f';
+        accentColor = '#92400e';
+        ribbonColor = '#d97706';
+    } else { // minimal
+        grad.addColorStop(0, '#f8fafc');
+        grad.addColorStop(1, '#f1f5f9');
+        textColor = '#1e293b';
+        accentColor = '#2563eb';
     }
+
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
 
-    // Decorative border
-    ctx.strokeStyle = isLight ? 'rgba(37,99,235,0.25)' : 'rgba(255,255,255,0.18)';
-    ctx.lineWidth = 2;
-    const m = 48;
-    ctx.strokeRect(m, m, W - m * 2, H - m * 2);
+    // Noise Texture
+    ctx.globalAlpha = 0.05;
+    for (let i = 0; i < 50000; i++) {
+        ctx.fillStyle = Math.random() > 0.5 ? '#fff' : '#000';
+        ctx.fillRect(Math.random() * W, Math.random() * H, 1, 1);
+    }
+    ctx.globalAlpha = 1.0;
 
-    // Big decorative quotation mark
-    ctx.font = 'bold 220px Georgia, serif';
-    ctx.fillStyle = isLight ? 'rgba(37,99,235,0.08)' : 'rgba(255,255,255,0.06)';
+    // Bookmark Ribbon
+    ctx.fillStyle = ribbonColor;
+    const ribW = 80, ribH = 120;
+    ctx.beginPath();
+    ctx.moveTo(100, 0);
+    ctx.lineTo(100 + ribW, 0);
+    ctx.lineTo(100 + ribW, ribH);
+    ctx.lineTo(100 + ribW / 2, ribH - 20);
+    ctx.lineTo(100, ribH);
+    ctx.closePath();
+    ctx.fill();
+
+    // Quotation Mark
+    ctx.font = 'bold 300px Georgia, serif';
+    ctx.fillStyle = textColor;
+    ctx.globalAlpha = 0.1;
     ctx.textAlign = 'left';
-    ctx.fillText('\u201C', 70, 320);
+    ctx.fillText('\u201C', 80, 400);
+    ctx.globalAlpha = 1.0;
 
-    // Category tag at top right
-    ctx.font = '500 28px "Noto Sans KR", sans-serif';
-    ctx.fillStyle = isLight ? 'rgba(37,99,235,0.6)' : 'rgba(255,255,255,0.45)';
-    ctx.textAlign = 'right';
-    ctx.fillText(`#${q.category}`, W - 80, 120);
-
-    // Quote text
-    const fontSize = q.text.length > 50 ? (q.text.length > 80 ? 34 : 38) : 44;
-    ctx.font = `${fontSize}px "Noto Serif KR", "Noto Sans KR", serif`;
-    ctx.fillStyle = isLight ? '#1e293b' : '#ffffff';
+    // Quote Text
+    const fontSize = q.text.length > 60 ? 46 : 54;
+    ctx.font = `500 ${fontSize}px "Noto Serif KR", serif`;
+    ctx.fillStyle = textColor;
     ctx.textAlign = 'center';
-
-    const lineH = fontSize * 1.65;
-    const maxW = W - 200;
+    
+    const lineH = fontSize * 1.8;
+    const maxW = W - 240;
     const lines = _wrapText(ctx, q.text, maxW);
     const textBlock = lines.length * lineH;
-    let startY = (H - textBlock) / 2 - 30;
+    let startY = (H - textBlock) / 2 - 40;
 
     lines.forEach((line, i) => {
         ctx.fillText(line, W / 2, startY + i * lineH);
     });
 
-    // Author name
-    ctx.font = `500 34px "Noto Sans KR", sans-serif`;
-    ctx.fillStyle = isLight ? '#2563eb' : '#fbbf24';
-    ctx.fillText(`— ${q.author}`, W / 2, startY + textBlock + 64);
+    // Author
+    ctx.font = '700 42px "Noto Sans KR", sans-serif';
+    ctx.fillStyle = accentColor;
+    ctx.fillText(`— ${q.author}`, W / 2, startY + textBlock + 100);
 
-    // Author desc
-    const p = people[q.author];
-    if (p && p.desc) {
-        ctx.font = `26px "Noto Sans KR", sans-serif`;
-        ctx.fillStyle = isLight ? 'rgba(30,41,59,0.55)' : 'rgba(255,255,255,0.45)';
-        ctx.fillText(p.desc, W / 2, startY + textBlock + 112);
+    // Author Desc
+    const p = people[q.author] || {};
+    if (p.desc) {
+        ctx.font = '400 30px "Noto Sans KR", sans-serif';
+        ctx.fillStyle = textColor;
+        ctx.globalAlpha = 0.7;
+        ctx.fillText(p.desc, W / 2, startY + textBlock + 160);
+        ctx.globalAlpha = 1.0;
     }
 
-    // Site branding at bottom
-    ctx.font = `24px "Noto Sans KR", sans-serif`;
-    ctx.fillStyle = isLight ? 'rgba(37,99,235,0.4)' : 'rgba(255,255,255,0.35)';
-    ctx.fillText('명언의 정원 · jasper-adsense-test.pages.dev', W / 2, H - 68);
+    // Category
+    ctx.font = '900 24px "Noto Sans KR", sans-serif';
+    ctx.fillStyle = textColor;
+    ctx.globalAlpha = 0.5;
+    ctx.textAlign = 'right';
+    ctx.fillText(`#${q.category}`, W - 100, 100);
+    ctx.globalAlpha = 1.0;
+
+    // Branding
+    ctx.font = '400 24px "Noto Sans KR", sans-serif';
+    ctx.fillStyle = textColor;
+    ctx.globalAlpha = 0.4;
+    ctx.textAlign = 'center';
+    ctx.fillText('명언의 정원 | jasper-adsense-test.pages.dev', W / 2, H - 100);
 }
 
 // ===== AD UNIT COMPONENT =====

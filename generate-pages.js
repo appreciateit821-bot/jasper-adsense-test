@@ -18,7 +18,7 @@ console.log(`✅ Loaded: ${Object.keys(people).length} people, ${quotes.length} 
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 const BASE = 'https://jasper-adsense-test.pages.dev';
-const TODAY = '2026-02-25';
+const TODAY = '2026-02-26';
 
 function safeSlug(str) {
     return str.replace(/\s+/g, '-');
@@ -111,6 +111,7 @@ function pageHead({ title, desc, url, keywords }) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js" integrity="sha384-l68Y9yH67iXU/lO62nUoD5AUnqUa6D3pS5H79D7aUfXpYn6X6Y/fK68Y9yH67iXU" crossorigin="anonymous"></script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5029784324732715" crossorigin="anonymous"></script>
 </head>`;
 }
@@ -388,13 +389,32 @@ if (!cssContent.includes('static-quote-item')) {
 
 .static-quote-item {
     background: var(--card-bg);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
+    border-radius: 4px 4px var(--radius-lg) var(--radius-lg);
+    padding: 2.5rem 2rem 2rem;
     border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.2s;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.012'/%3E%3C/svg%3E");
 }
-.static-quote-item:hover { box-shadow: var(--shadow); }
+
+.static-quote-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 1.5rem;
+    width: 20px;
+    height: 32px;
+    background: var(--primary);
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 80%, 0% 100%);
+    opacity: 0.8;
+}
+
+.static-quote-item:hover { 
+    transform: translateY(-4px);
+    box-shadow: var(--shadow); 
+}
 
 .static-quote-text {
     font-family: var(--font-serif);
