@@ -32,10 +32,8 @@ function escHtml(str) {
 }
 
 function adsenseBlock() {
-    return `<div class="ad-container">
-    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-5029784324732715"
-         data-ad-slot="auto" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    return `<div class="container ad-container">
+    <ad-unit></ad-unit>
 </div>`;
 }
 

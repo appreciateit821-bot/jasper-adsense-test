@@ -998,77 +998,84 @@ function showDailyQuote() {
     document.getElementById('dailyQuoteAuthor').textContent = `${q.author} (${p.nameEn || ''}) — ${p.desc || ''}`;
 }
 
+// ===== QUOTE CARD COMPONENT =====
+class QuoteCard extends HTMLElement {
+    set quoteData(q) {
+        const p = people[q.author] || {};
+        const qId = getQuoteId(q);
+        const liked = isLiked(qId);
+
+        this.className = 'quote-card';
+        this.innerHTML = `
+            <span class="quote-category">${q.category}</span>
+            <div class="quote-icon">\u201C</div>
+            <p class="quote-text">${q.text}</p>
+            <div class="quote-commentary">${q.commentary}</div>
+            <div class="quote-actions">
+                <button class="like-btn ${liked ? 'liked' : ''}" data-qid="${qId}" aria-label="좋아요">
+                    <span class="like-icon">${liked ? '\u2764\uFE0F' : '\u2661'}</span>
+                    <span class="like-label">${liked ? '좋아요 취소' : '좋아요'}</span>
+                </button>
+                <div class="share-buttons">
+                    <button class="share-btn share-btn-twitter" title="X(트위터)에 공유" aria-label="X에 공유">𝕏</button>
+                    <button class="share-btn share-btn-copy" title="명언 텍스트 복사" aria-label="복사">🔗</button>
+                    <button class="share-btn share-btn-image" title="이미지 카드 만들기" aria-label="이미지 카드">🖼</button>
+                </div>
+            </div>
+            <div class="quote-footer">
+                <div class="author-avatar" data-wiki="${p.wiki || ''}" data-author="${q.author}">${getInitials(q.author)}</div>
+                <div class="author-info">
+                    <div class="author-name author-link" data-author="${q.author}">${q.author}</div>
+                    <div class="author-desc">${p.desc || ''}</div>
+                </div>
+            </div>
+        `;
+
+        // Like button
+        this.querySelector('.like-btn').addEventListener('click', (e) => {
+            const btn = e.currentTarget;
+            const isNowLiked = toggleLike(qId);
+            btn.classList.toggle('liked', isNowLiked);
+            btn.querySelector('.like-icon').textContent = isNowLiked ? '\u2764\uFE0F' : '\u2661';
+            btn.querySelector('.like-label').textContent = isNowLiked ? '좋아요 취소' : '좋아요';
+            updateLikeCounter();
+            refreshIfLikedTabActive();
+        });
+
+        // Share buttons
+        this.querySelector('.share-btn-twitter').addEventListener('click', () => shareToTwitter(q));
+        this.querySelector('.share-btn-copy').addEventListener('click', (e) => copyQuoteText(q, e.currentTarget));
+        this.querySelector('.share-btn-image').addEventListener('click', () => showImageCardModal(q));
+
+        // Author click -> person detail
+        this.querySelectorAll('.author-link, .author-avatar').forEach(el => {
+            el.style.cursor = 'pointer';
+            el.addEventListener('click', () => {
+                const personData = getUniquePeople().find(pp => pp.name === q.author);
+                if (personData) showPersonQuotes(personData);
+            });
+        });
+
+        // Load image for avatar
+        if (p.wiki) {
+            const avatar = this.querySelector('.author-avatar');
+            getWikiImage(p.wiki).then(url => {
+                if (url) {
+                    avatar.style.backgroundImage = `url(${url})`;
+                    avatar.style.backgroundSize = 'cover';
+                    avatar.style.backgroundPosition = 'center';
+                    avatar.textContent = '';
+                }
+            });
+        }
+    }
+}
+customElements.define('quote-card', QuoteCard);
+
 // ===== RENDER QUOTE CARD =====
 function renderQuoteCard(q) {
-    const p = people[q.author] || {};
-    const qId = getQuoteId(q);
-    const liked = isLiked(qId);
-
-    const card = document.createElement('article');
-    card.className = 'quote-card';
-    card.innerHTML = `
-        <span class="quote-category">${q.category}</span>
-        <div class="quote-icon">\u201C</div>
-        <p class="quote-text">${q.text}</p>
-        <div class="quote-commentary">${q.commentary}</div>
-        <div class="quote-actions">
-            <button class="like-btn ${liked ? 'liked' : ''}" data-qid="${qId}" aria-label="좋아요">
-                <span class="like-icon">${liked ? '\u2764\uFE0F' : '\u2661'}</span>
-                <span class="like-label">${liked ? '좋아요 취소' : '좋아요'}</span>
-            </button>
-            <div class="share-buttons">
-                <button class="share-btn share-btn-twitter" title="X(트위터)에 공유" aria-label="X에 공유">𝕏</button>
-                <button class="share-btn share-btn-copy" title="명언 텍스트 복사" aria-label="복사">🔗</button>
-                <button class="share-btn share-btn-image" title="이미지 카드 만들기" aria-label="이미지 카드">🖼</button>
-            </div>
-        </div>
-        <div class="quote-footer">
-            <div class="author-avatar" data-wiki="${p.wiki || ''}" data-author="${q.author}">${getInitials(q.author)}</div>
-            <div class="author-info">
-                <div class="author-name author-link" data-author="${q.author}">${q.author}</div>
-                <div class="author-desc">${p.desc || ''}</div>
-            </div>
-        </div>
-    `;
-
-    // Like button
-    card.querySelector('.like-btn').addEventListener('click', (e) => {
-        const btn = e.currentTarget;
-        const isNowLiked = toggleLike(qId);
-        btn.classList.toggle('liked', isNowLiked);
-        btn.querySelector('.like-icon').textContent = isNowLiked ? '\u2764\uFE0F' : '\u2661';
-        btn.querySelector('.like-label').textContent = isNowLiked ? '좋아요 취소' : '좋아요';
-        updateLikeCounter();
-        refreshIfLikedTabActive();
-    });
-
-    // Share buttons
-    card.querySelector('.share-btn-twitter').addEventListener('click', () => shareToTwitter(q));
-    card.querySelector('.share-btn-copy').addEventListener('click', (e) => copyQuoteText(q, e.currentTarget));
-    card.querySelector('.share-btn-image').addEventListener('click', () => showImageCardModal(q));
-
-    // Author click -> person detail
-    card.querySelectorAll('.author-link, .author-avatar').forEach(el => {
-        el.style.cursor = 'pointer';
-        el.addEventListener('click', () => {
-            const personData = getUniquePeople().find(pp => pp.name === q.author);
-            if (personData) showPersonQuotes(personData);
-        });
-    });
-
-    // Load image for avatar
-    if (p.wiki) {
-        const avatar = card.querySelector('.author-avatar');
-        getWikiImage(p.wiki).then(url => {
-            if (url) {
-                avatar.style.backgroundImage = `url(${url})`;
-                avatar.style.backgroundSize = 'cover';
-                avatar.style.backgroundPosition = 'center';
-                avatar.textContent = '';
-            }
-        });
-    }
-
+    const card = document.createElement('quote-card');
+    card.quoteData = q;
     return card;
 }
 
@@ -1531,6 +1538,26 @@ function _drawImageCard(q, theme = 'dark') {
     ctx.fillStyle = isLight ? 'rgba(37,99,235,0.4)' : 'rgba(255,255,255,0.35)';
     ctx.fillText('명언의 정원 · jasper-adsense-test.pages.dev', W / 2, H - 68);
 }
+
+// ===== AD UNIT COMPONENT =====
+class AdUnit extends HTMLElement {
+    connectedCallback() {
+        this.innerHTML = `
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-5029784324732715"
+                 data-ad-slot="auto"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        `;
+        try {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {
+            console.error('AdSense initialization error:', e);
+        }
+    }
+}
+customElements.define('ad-unit', AdUnit);
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
