@@ -227,31 +227,39 @@ const people = {
     "한비자": {
         nameEn: "Han Feizi", wiki: "Han_Fei", desc: "중국 고대 법가 사상가 (BC 280-233)",
         bio: "한비자는 중국 전국시대 한나라 출신의 사상가로, 법가 사상을 집대성한 인물입니다. 순자에게 배웠으며, 동문인 이사와 함께 진시황에게 큰 영향을 미쳤습니다. 법(法), 술(術), 세(勢)를 통치의 세 축으로 제시하여 법치주의의 기초를 놓았으며, 진시황의 중국 통일에 사상적 기반을 제공했습니다. 《한비자》 55편을 저술했으나, 정치적 모함에 의해 진나라 감옥에서 독을 마시고 세상을 떠났습니다."
-    }
+    },
+    "아바타": { nameEn: "Avatar", wiki: "Avatar_(2009_film)", desc: "영화 대사", source: "movie" },
+    "타이타닉": { nameEn: "Titanic", wiki: "Titanic_(1997_film)", desc: "영화 대사", source: "movie" },
+    "스타워즈": { nameEn: "Star Wars", wiki: "Star_Wars", desc: "영화 대사", source: "movie" },
+    "쇼생크 탈출": { nameEn: "The Shawshank Redemption", wiki: "The_Shawshank_Redemption", desc: "영화 대사", source: "movie" },
+    "어린 왕자": { nameEn: "The Little Prince", wiki: "The_Little_Prince", desc: "책 구절", source: "book" },
+    "연금술사": { nameEn: "The Alchemist", wiki: "The_Alchemist", desc: "책 구절", source: "book" },
+    "반지의 제왕": { nameEn: "The Lord of the Rings", wiki: "The_Lord_of_the_Rings", desc: "책 구절", source: "book" },
+    "죽은 시인의 사회": { nameEn: "Dead Poets Society", wiki: "Dead_Poets_Society", desc: "책 구절", source: "book" }
 };
 
 // ===== QUOTES DATA =====
 const quotes = [
     // 인생/철학
-    { text: "삶이 있는 한 희망은 있다.", author: "키케로", category: "인생",
+    { text: "삶이 있는 한 희망은 있다.", author: "키케로", source: "person", category: "인생",
       commentary: "키케로는 로마 공화정 말기의 정치가이자 웅변가였습니다. 정치적 격변 속에서도 끝까지 공화정의 이상을 포기하지 않았던 그는, 어떤 상황에서도 삶 자체가 가능성의 근거라는 확신을 가지고 있었습니다. 이 명언은 절망적인 순간에도 생존 자체가 반전의 씨앗이라는 메시지를 담고 있습니다." },
-    { text: "검사하지 않은 삶은 살 가치가 없다.", author: "소크라테스", category: "인생",
+    { text: "검사하지 않은 삶은 살 가치가 없다.", author: "소크라테스", source: "person", category: "인생",
       commentary: "소크라테스의 재판 기록인 『소크라테스의 변론』에서 나온 이 말은, 서양 철학의 근본 정신을 요약합니다. 그는 사형 선고 앞에서도 자신의 신념을 굽히지 않으며 이 말을 남겼습니다. '검사한다'는 것은 단순한 반성이 아니라, 자신의 믿음과 행동의 근거를 끊임없이 질문하는 비판적 사고를 의미합니다." },
-    { text: "인생은 가까이서 보면 비극이지만 멀리서 보면 희극이다.", author: "찰리 채플린", category: "인생",
+    { text: "인생은 가까이서 보면 비극이지만 멀리서 보면 희극이다.", author: "찰리 채플린", source: "person", category: "인생",
       commentary: "무성영화 시대의 전설적인 코미디언 채플린은 런던 빈민가에서 자라 할리우드 최고의 스타가 된 인물입니다. 가난과 고난을 웃음으로 승화시킨 그의 예술 세계가 이 한 마디에 응축되어 있습니다." },
-    { text: "우리가 두려워해야 할 것은 두려움 그 자체뿐이다.", author: "프랭클린 D. 루스벨트", category: "인생",
+    { text: "우리가 두려워해야 할 것은 두려움 그 자체뿐이다.", author: "프랭클린 D. 루스벨트", source: "person", category: "인생",
       commentary: "1933년 대공황 한복판에서의 취임 연설에 등장한 이 명언은, 경제적 파탄으로 공포에 빠진 미국 국민에게 용기를 준 역사적 한마디입니다." },
-    { text: "삶은 자전거를 타는 것과 같다. 균형을 잡으려면 계속 움직여야 한다.", author: "알베르트 아인슈타인", category: "인생",
+    { text: "삶은 자전거를 타는 것과 같다. 균형을 잡으려면 계속 움직여야 한다.", author: "알베르트 아인슈타인", source: "person", category: "인생",
       commentary: "1930년 아들 에두아르트에게 보낸 편지에서 이 비유를 사용했는데, 정체는 곧 쓰러짐이라는 물리적 진실을 인생의 지혜로 연결한 것이 특징입니다." },
-    { text: "산다는 것은 호흡하는 것이 아니라 행동하는 것이다.", author: "장 자크 루소", category: "인생",
+    { text: "산다는 것은 호흡하는 것이 아니라 행동하는 것이다.", author: "장 자크 루소", source: "person", category: "인생",
       commentary: "프랑스 계몽주의를 대표하는 사상가 루소는 『에밀』에서 교육의 본질을 탐구하며 이 말을 남겼습니다. 진정한 삶이란 의지를 가지고 세상과 관계를 맺는 능동적 행위입니다." },
-    { text: "인생에서 가장 중요한 것은 자신의 길을 찾는 것이다.", author: "헤르만 헤세", category: "인생",
+    { text: "인생에서 가장 중요한 것은 자신의 길을 찾는 것이다.", author: "헤르만 헤세", source: "person", category: "인생",
       commentary: "『데미안』, 『싯다르타』 등으로 자아 탐구의 문학을 개척한 헤세는 평생 '자기 자신이 되는 것'의 중요성을 역설했습니다." },
-    { text: "삶이란 우리가 다른 계획을 세우느라 바쁠 때 일어나는 것이다.", author: "존 레논", category: "인생",
+    { text: "삶이란 우리가 다른 계획을 세우느라 바쁠 때 일어나는 것이다.", author: "존 레논", source: "person", category: "인생",
       commentary: "비틀즈의 리더이자 평화 운동가였던 존 레논의 이 말은 곡 'Beautiful Boy'에 담겨 있습니다. 40세에 총격으로 세상을 떠난 그의 삶이 이 명언에 더 깊은 울림을 더합니다." },
-    { text: "살아 있다는 것 자체가 기적이다.", author: "틱낫한", category: "인생",
+    { text: "살아 있다는 것 자체가 기적이다.", author: "틱낫한", source: "person", category: "인생",
       commentary: "베트남 전쟁 중 평화 운동을 이끌며 마틴 루터 킹에 의해 노벨평화상 후보로 추천된 틱낫한 스님은 '마음챙김(mindfulness)'의 세계적 전파자입니다." },
-    { text: "인생은 짧고 예술은 길다.", author: "히포크라테스", category: "인생",
+    { text: "인생은 짧고 예술은 길다.", author: "히포크라테스", source: "person", category: "인생",
       commentary: "의학의 아버지 히포크라테스가 남긴 이 격언은 원래 의술을 배우는 데는 인생이 너무 짧다는 뜻이었습니다. 2400년이 지난 지금도 모든 분야의 장인들에게 통용되는 진리입니다." },
 
     // 성공/동기부여
@@ -397,6 +405,16 @@ const quotes = [
       commentary: "시간의 상대성을 과학적으로 증명한 아인슈타인이 삶에서의 시간에 대해 남긴 균형 잡힌 시간관입니다." },
     { text: "가장 좋은 때는 지금이다.", author: "한비자", category: "시간",
       commentary: "법가 사상을 집대성한 한비자는 완벽한 시기를 기다리는 것은 영원히 시작하지 않는 것과 같다고 보았습니다." },
+
+    // 영화 명대사
+    { text: "나는 너를 본다.", author: "아바타", source: "movie", title: "아바타", category: "사랑",
+      commentary: "나비족의 인사말 '나는 너를 본다'는 단순히 시각적인 인지를 넘어, 상대방의 영혼과 존재를 깊이 이해하고 존중한다는 의미를 담고 있습니다. 이는 타인과의 진정한 연결과 공감의 중요성을 일깨워줍니다." },
+    { text: "내 인생의 가장 큰 행운은 당신을 만난 거야.", author: "타이타닉", source: "movie", title: "타이타닉", category: "사랑",
+      commentary: "비극적인 운명 속에서도 피어난 잭과 로즈의 사랑을 상징하는 대사입니다. 짧은 만남이었지만 서로의 삶에 지대한 영향을 미친 관계의 소중함과 운명적인 사랑의 순간을 표현합니다." },
+    { text: "포스가 당신과 함께하기를.", author: "스타워즈", source: "movie", title: "스타워즈", category: "용기",
+      commentary: "스타워즈 시리즈의 상징적인 이 대사는 상대방에게 행운과 성공, 그리고 내면의 힘이 항상 함께하기를 바라는 응원의 메시지입니다. 미지의 어려움에 맞설 때 필요한 용기와 믿음을 부여합니다." },
+    { text: "희망은 좋은 것이다. 어쩌면 가장 좋은 것일지도 모른다. 좋은 것은 절대 사라지지 않는다.", author: "쇼생크 탈출", source: "movie", title: "쇼생크 탈출", category: "희망",
+      commentary: "억울한 누명을 쓰고 종신형을 선고받은 앤디 듀프레인이 교도소라는 절망적인 공간에서도 희망을 잃지 않는 이유를 설명하는 대사입니다. 어떠한 역경 속에서도 인간을 지탱하는 근원적인 힘이 희망임을 강조합니다." }
 ];
 
 // ===== CATEGORIES =====
@@ -415,6 +433,7 @@ function getUniquePeople() {
     });
     return [...map.values()].sort((a, b) => b.count - a.count);
 }
+
 
 // ===== WIKIPEDIA IMAGE CACHE =====
 const imageCache = {};
