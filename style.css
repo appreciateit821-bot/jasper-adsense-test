@@ -959,6 +959,51 @@ body {
     line-height: 1.7;
 }
 
+/* ===== SEO SITEMAP SECTION ===== */
+.seo-sitemap-section {
+    padding: 4rem 0;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+}
+
+.seo-sitemap-section h2 {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+}
+
+.seo-sitemap-section > .container > p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.2rem;
+}
+
+.seo-cat-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.seo-cat-links a {
+    display: inline-block;
+    padding: 0.4rem 0.9rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 2rem;
+    font-size: 0.85rem;
+    color: var(--primary-dark);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.seo-cat-links a:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
     .quotes-masonry { columns: 2; }
