@@ -1619,205 +1619,301 @@ function copyQuoteText(q, btn) {
     });
 }
 
-// ===== IMAGE CARD GENERATOR =====
-let _imageCardModal = null;
-let _currentCardQuote = null;
-let _currentTheme = 'dark';
+// ===== IMAGE CARD GENERATOR (Pinterest Edition) =====
+
+const CARD_BACKGROUNDS = [
+    { id: 'paris',       label: '파리',       url: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34' },
+    { id: 'newyork',     label: '뉴욕',       url: 'https://images.unsplash.com/photo-1485871981521-5b1fd3805eee' },
+    { id: 'santorini',   label: '산토리니',   url: 'https://images.unsplash.com/photo-1533105079780-92b9be482077' },
+    { id: 'tokyo',       label: '도쿄',       url: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf' },
+    { id: 'kyoto',       label: '교토',       url: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186' },
+    { id: 'maldives',    label: '몰디브',     url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e' },
+    { id: 'bali',        label: '발리',       url: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4' },
+    { id: 'london',      label: '런던',       url: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad' },
+    { id: 'venice',      label: '베네치아',   url: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9' },
+    { id: 'dubai',       label: '두바이',     url: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c' },
+    { id: 'sydney',      label: '시드니',     url: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9' },
+    { id: 'barcelona',   label: '바르셀로나', url: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4' },
+    { id: 'amalfi',      label: '아말피',     url: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963' },
+    { id: 'prague',      label: '프라하',     url: 'https://images.unsplash.com/photo-1541849546-216549ae216d' },
+    { id: 'newyork2',    label: '뉴욕 야경',  url: 'https://images.unsplash.com/photo-1499092346589-b9b6be3e94b2' },
+    { id: 'jeju',        label: '제주',       url: 'https://images.unsplash.com/photo-1548115184-bc6544d06a58' },
+];
+
+const CARD_FONTS = [
+    { id: 'serif', label: '세리프체', family: '"Noto Serif KR", Georgia, serif', style: 'italic' },
+    { id: 'sans',  label: '고딕체',   family: '"Noto Sans KR", "Apple SD Gothic Neo", sans-serif', style: 'normal' },
+];
+
+const CARD_COLORS = [
+    { id: 'white',  label: '화이트', value: '#FFFFFF' },
+    { id: 'cream',  label: '크림',   value: '#FFF6E0' },
+    { id: 'gold',   label: '골드',   value: '#F5C842' },
+    { id: 'pink',   label: '핑크',   value: '#FFB5C8' },
+    { id: 'sky',    label: '하늘',   value: '#B8E4F9' },
+    { id: 'mint',   label: '민트',   value: '#B2EFD8' },
+    { id: 'black',  label: '블랙',   value: '#1C1C1C' },
+    { id: 'navy',   label: '네이비', value: '#1E3A5F' },
+];
+
+const CARD_OVERLAYS = [
+    { id: 'none',   label: '없음',     alpha: 0.0  },
+    { id: 'soft',   label: '부드럽게', alpha: 0.35 },
+    { id: 'medium', label: '보통',     alpha: 0.52 },
+    { id: 'dark',   label: '진하게',   alpha: 0.70 },
+];
+
+const _bgCache = new Map();
+let _cardModal = null;
+let _cardQuote = null;
+let _cardState = { bgId: 'paris', fontId: 'serif', colorId: 'white', overlayId: 'medium' };
 
 function showImageCardModal(q) {
-    _currentCardQuote = q;
-    _currentTheme = 'dark';
-
-    if (!_imageCardModal) {
-        _imageCardModal = document.createElement('div');
-        _imageCardModal.className = 'image-card-modal';
-        _imageCardModal.innerHTML = `
-            <div class="image-card-modal-inner">
-                <h3 class="modal-title">📸 명언 책갈피 만들기</h3>
-                <div class="theme-selector">
-                    <button class="theme-btn active" data-theme="dark">🌙 어두운</button>
-                    <button class="theme-btn" data-theme="gradient">✨ 그라데이션</button>
-                    <button class="theme-btn" data-theme="warm">🍂 따뜻한</button>
-                    <button class="theme-btn" data-theme="minimal">⚪ 심플</button>
-                </div>
-                <div class="canvas-wrapper">
-                    <canvas class="quote-canvas" width="1080" height="1350"></canvas>
-                </div>
-                <p style="color: #9ca3af; font-size: 0.8rem; text-align: center; margin-bottom: 1rem;">1080x1350 사이즈로 인스타그램 피드에 최적화되어 있습니다.</p>
-                <div class="modal-actions">
-                    <button class="btn-download-card">⬇ 이미지 저장</button>
-                    <button class="btn-close-modal">닫기</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(_imageCardModal);
-
-        _imageCardModal.querySelectorAll('.theme-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                _imageCardModal.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                _currentTheme = btn.dataset.theme;
-                _drawImageCard(_currentCardQuote, _currentTheme);
-            });
-        });
-
-        _imageCardModal.querySelector('.btn-download-card').addEventListener('click', () => {
-            const canvas = _imageCardModal.querySelector('.quote-canvas');
-            const link = document.createElement('a');
-            link.download = `명언책갈피_${_currentCardQuote.author}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        });
-
-        _imageCardModal.querySelector('.btn-close-modal').addEventListener('click', _closeImageCardModal);
-        _imageCardModal.addEventListener('click', (e) => {
-            if (e.target === _imageCardModal) _closeImageCardModal();
-        });
+    _cardQuote = q;
+    if (!_cardModal) {
+        _cardModal = document.createElement('div');
+        _cardModal.className = 'card-gen-modal';
+        _cardModal.innerHTML = _buildCardModalHTML();
+        document.body.appendChild(_cardModal);
+        _initCardModalEvents();
     }
-
-    _imageCardModal.style.display = 'flex';
+    _cardModal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
-    document.fonts.ready.then(() => _drawImageCard(q, _currentTheme));
+    document.fonts.ready.then(() => _renderCard());
 }
 
-function _closeImageCardModal() {
-    if (_imageCardModal) {
-        _imageCardModal.style.display = 'none';
-        document.body.style.overflow = '';
-    }
+function _buildCardModalHTML() {
+    const bgThumbs = CARD_BACKGROUNDS.map(bg => `
+        <button class="cg-bg-thumb ${bg.id === _cardState.bgId ? 'active' : ''}" data-bg="${bg.id}" title="${bg.label}">
+            <img src="${bg.url}?w=100&h=125&fit=crop&q=60" loading="lazy" alt="${bg.label}">
+            <span>${bg.label}</span>
+        </button>`).join('');
+
+    const fontBtns = CARD_FONTS.map(f => `
+        <button class="cg-opt-btn ${f.id === _cardState.fontId ? 'active' : ''}" data-font="${f.id}" style="font-family:${f.family};font-style:${f.style}">${f.label}</button>`).join('');
+
+    const colorSwatches = CARD_COLORS.map(c => `
+        <button class="cg-swatch ${c.id === _cardState.colorId ? 'active' : ''}" data-color="${c.id}" style="background:${c.value}" title="${c.label}"></button>`).join('');
+
+    const overlayBtns = CARD_OVERLAYS.map(o => `
+        <button class="cg-opt-btn ${o.id === _cardState.overlayId ? 'active' : ''}" data-overlay="${o.id}">${o.label}</button>`).join('');
+
+    return `
+    <div class="card-gen-inner">
+        <div class="card-gen-header">
+            <span class="card-gen-title">명언 카드 만들기</span>
+            <button class="card-gen-close" aria-label="닫기">✕</button>
+        </div>
+        <div class="card-gen-body">
+            <div class="card-gen-preview">
+                <div class="card-gen-canvas-wrap">
+                    <canvas class="quote-canvas" width="1080" height="1350"></canvas>
+                    <div class="card-gen-spinner" style="display:none"><div class="cg-spin"></div></div>
+                </div>
+            </div>
+            <div class="card-gen-controls">
+                <div class="cg-option-group">
+                    <p class="cg-option-label">배경 선택</p>
+                    <div class="cg-bg-scroll">${bgThumbs}</div>
+                </div>
+                <div class="cg-option-group">
+                    <p class="cg-option-label">폰트</p>
+                    <div class="cg-opt-row">${fontBtns}</div>
+                </div>
+                <div class="cg-option-group">
+                    <p class="cg-option-label">글씨 색</p>
+                    <div class="cg-swatch-row">${colorSwatches}</div>
+                </div>
+                <div class="cg-option-group">
+                    <p class="cg-option-label">오버레이 어둡기</p>
+                    <div class="cg-opt-row">${overlayBtns}</div>
+                </div>
+                <div class="cg-actions">
+                    <button class="cg-save-btn">이미지 저장</button>
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+function _initCardModalEvents() {
+    _cardModal.querySelectorAll('.cg-bg-thumb').forEach(btn => {
+        btn.addEventListener('click', () => {
+            _cardModal.querySelectorAll('.cg-bg-thumb').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            _cardState.bgId = btn.dataset.bg;
+            _renderCard();
+        });
+    });
+    _cardModal.querySelectorAll('[data-font]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            _cardModal.querySelectorAll('[data-font]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            _cardState.fontId = btn.dataset.font;
+            _renderCard();
+        });
+    });
+    _cardModal.querySelectorAll('[data-color]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            _cardModal.querySelectorAll('[data-color]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            _cardState.colorId = btn.dataset.color;
+            _renderCard();
+        });
+    });
+    _cardModal.querySelectorAll('[data-overlay]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            _cardModal.querySelectorAll('[data-overlay]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            _cardState.overlayId = btn.dataset.overlay;
+            _renderCard();
+        });
+    });
+    _cardModal.querySelector('.cg-save-btn').addEventListener('click', () => {
+        const canvas = _cardModal.querySelector('.quote-canvas');
+        const a = document.createElement('a');
+        a.download = `명언카드_${_cardQuote.author}.png`;
+        a.href = canvas.toDataURL('image/png');
+        a.click();
+    });
+    _cardModal.querySelector('.card-gen-close').addEventListener('click', _closeCardModal);
+    _cardModal.addEventListener('click', e => { if (e.target === _cardModal) _closeCardModal(); });
+}
+
+function _closeCardModal() {
+    if (_cardModal) { _cardModal.style.display = 'none'; document.body.style.overflow = ''; }
+}
+
+function _loadBg(bg) {
+    return new Promise(resolve => {
+        if (_bgCache.has(bg.id)) return resolve(_bgCache.get(bg.id));
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => { _bgCache.set(bg.id, img); resolve(img); };
+        img.onerror = () => resolve(null);
+        img.src = `${bg.url}?w=1080&h=1350&fit=crop&q=85`;
+    });
 }
 
 function _wrapText(ctx, text, maxWidth) {
-    const words = text.split(' ');
+    const words = text.split('');
     const lines = [];
     let line = '';
-
-    for (const word of words) {
-        const test = line + (line ? ' ' : '') + word;
-        if (ctx.measureText(test).width > maxWidth) {
+    // character-by-character wrap for Korean
+    for (const char of text) {
+        const test = line + char;
+        if (ctx.measureText(test).width > maxWidth && line.length > 0) {
             lines.push(line);
-            line = word;
+            line = char;
         } else {
             line = test;
         }
     }
-    lines.push(line);
+    if (line) lines.push(line);
     return lines;
 }
 
-function _drawImageCard(q, theme = 'dark') {
-    const canvas = _imageCardModal.querySelector('.quote-canvas');
+function _hexToRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+    return `${r},${g},${b}`;
+}
+
+async function _renderCard() {
+    const canvas = _cardModal.querySelector('.quote-canvas');
     if (!canvas) return;
+    const spinner = _cardModal.querySelector('.card-gen-spinner');
+    if (spinner) spinner.style.display = 'flex';
+
     const ctx = canvas.getContext('2d');
     const W = 1080, H = 1350;
-    
-    // Background
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, W, H);
+    const q = _cardQuote;
+    const bg   = CARD_BACKGROUNDS.find(b => b.id === _cardState.bgId);
+    const font = CARD_FONTS.find(f => f.id === _cardState.fontId);
+    const col  = CARD_COLORS.find(c => c.id === _cardState.colorId);
+    const ov   = CARD_OVERLAYS.find(o => o.id === _cardState.overlayId);
 
-    const grad = ctx.createLinearGradient(0, 0, W, H);
-    let textColor = '#ffffff';
-    let accentColor = '#fbbf24';
-    let ribbonColor = '#2563eb';
+    const bgImg = await _loadBg(bg);
+    if (spinner) spinner.style.display = 'none';
 
-    if (theme === 'dark') {
-        grad.addColorStop(0, '#1e293b');
-        grad.addColorStop(1, '#0f172a');
-        textColor = '#f8fafc';
-    } else if (theme === 'gradient') {
-        grad.addColorStop(0, '#4f46e5');
-        grad.addColorStop(1, '#7c3aed');
-        textColor = '#ffffff';
-        accentColor = '#60a5fa';
-    } else if (theme === 'warm') {
-        grad.addColorStop(0, '#fef3c7');
-        grad.addColorStop(1, '#fbbf24');
-        textColor = '#78350f';
-        accentColor = '#92400e';
-        ribbonColor = '#d97706';
-    } else { // minimal
-        grad.addColorStop(0, '#f8fafc');
-        grad.addColorStop(1, '#f1f5f9');
-        textColor = '#1e293b';
-        accentColor = '#2563eb';
+    // ── Background ──────────────────────────────────────────────
+    ctx.clearRect(0, 0, W, H);
+    if (bgImg) {
+        ctx.drawImage(bgImg, 0, 0, W, H);
+    } else {
+        const gr = ctx.createLinearGradient(0, 0, 0, H);
+        gr.addColorStop(0, '#1a1a2e'); gr.addColorStop(1, '#16213e');
+        ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
     }
 
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H);
-
-    // Noise Texture
-    ctx.globalAlpha = 0.05;
-    for (let i = 0; i < 50000; i++) {
-        ctx.fillStyle = Math.random() > 0.5 ? '#fff' : '#000';
-        ctx.fillRect(Math.random() * W, Math.random() * H, 1, 1);
+    // ── Overlay ──────────────────────────────────────────────────
+    if (ov.alpha > 0) {
+        ctx.fillStyle = `rgba(0,0,0,${ov.alpha})`; ctx.fillRect(0, 0, W, H);
     }
-    ctx.globalAlpha = 1.0;
 
-    // Bookmark Ribbon
-    ctx.fillStyle = ribbonColor;
-    const ribW = 80, ribH = 120;
-    ctx.beginPath();
-    ctx.moveTo(100, 0);
-    ctx.lineTo(100 + ribW, 0);
-    ctx.lineTo(100 + ribW, ribH);
-    ctx.lineTo(100 + ribW / 2, ribH - 20);
-    ctx.lineTo(100, ribH);
-    ctx.closePath();
-    ctx.fill();
+    // ── Subtle vignette ──────────────────────────────────────────
+    const vgn = ctx.createRadialGradient(W/2, H/2, W*0.25, W/2, H/2, W*0.85);
+    vgn.addColorStop(0, 'rgba(0,0,0,0)');
+    vgn.addColorStop(1, 'rgba(0,0,0,0.45)');
+    ctx.fillStyle = vgn; ctx.fillRect(0, 0, W, H);
 
-    // Quotation Mark
-    ctx.font = 'bold 300px Georgia, serif';
-    ctx.fillStyle = textColor;
-    ctx.globalAlpha = 0.1;
-    ctx.textAlign = 'left';
-    ctx.fillText('\u201C', 80, 400);
-    ctx.globalAlpha = 1.0;
+    const tc = col.value;
+    const rgb = _hexToRgb(tc);
 
-    // Quote Text
-    const fontSize = q.text.length > 60 ? 46 : 54;
-    ctx.font = `500 ${fontSize}px "Noto Serif KR", serif`;
-    ctx.fillStyle = textColor;
-    ctx.textAlign = 'center';
-    
-    const lineH = fontSize * 1.8;
-    const maxW = W - 240;
-    const lines = _wrapText(ctx, q.text, maxW);
-    const textBlock = lines.length * lineH;
-    let startY = (H - textBlock) / 2 - 40;
-
-    lines.forEach((line, i) => {
-        ctx.fillText(line, W / 2, startY + i * lineH);
+    // ── Thin top & bottom border lines ───────────────────────────
+    ctx.strokeStyle = `rgba(${rgb},0.35)`;
+    ctx.lineWidth = 2;
+    [[100, 110, W-100, 110], [100, H-110, W-100, H-110]].forEach(([x1,y1,x2,y2]) => {
+        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
     });
 
-    // Author
-    ctx.font = '700 42px "Noto Sans KR", sans-serif';
-    ctx.fillStyle = accentColor;
-    ctx.fillText(`— ${q.author}`, W / 2, startY + textBlock + 100);
+    // ── Giant decorative quotation mark ──────────────────────────
+    ctx.save();
+    ctx.font = `300 320px Georgia, serif`;
+    ctx.fillStyle = `rgba(${rgb},0.08)`;
+    ctx.textAlign = 'left';
+    ctx.fillText('\u201C', 70, H * 0.52);
+    ctx.restore();
 
-    // Author Desc
+    // ── Quote text ───────────────────────────────────────────────
+    const textLen = q.text.length;
+    const fontSize = textLen > 50 ? (textLen > 70 ? 54 : 62) : 72;
+    ctx.font = `400 ${fontSize}px ${font.family}`;
+    ctx.fillStyle = tc;
+    ctx.textAlign = 'center';
+    ctx.globalAlpha = 1;
+
+    const maxTW = W - 240;
+    const rawLines = _wrapText(ctx, q.text, maxTW);
+    const lineH = fontSize * 1.9;
+    const blockH = rawLines.length * lineH;
+    const textY = (H - blockH) / 2 - 20;
+
+    rawLines.forEach((line, i) => {
+        ctx.fillText(line, W/2, textY + i * lineH);
+    });
+
+    // ── Thin divider before author ────────────────────────────────
+    const divY = textY + blockH + 64;
+    ctx.strokeStyle = `rgba(${rgb},0.45)`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(W/2 - 50, divY); ctx.lineTo(W/2 + 50, divY); ctx.stroke();
+
+    // ── Author name ───────────────────────────────────────────────
+    ctx.font = `700 40px "Noto Sans KR", sans-serif`;
+    ctx.fillStyle = tc;
+    ctx.globalAlpha = 0.95;
+    ctx.fillText(q.author, W/2, divY + 60);
+
+    // ── Author desc ───────────────────────────────────────────────
     const p = people[q.author] || {};
     if (p.desc) {
-        ctx.font = '400 30px "Noto Sans KR", sans-serif';
-        ctx.fillStyle = textColor;
-        ctx.globalAlpha = 0.7;
-        ctx.fillText(p.desc, W / 2, startY + textBlock + 160);
-        ctx.globalAlpha = 1.0;
+        ctx.font = `300 30px "Noto Sans KR", sans-serif`;
+        ctx.fillStyle = tc;
+        ctx.globalAlpha = 0.6;
+        ctx.fillText(p.desc, W/2, divY + 110);
     }
 
-    // Category
-    ctx.font = '900 24px "Noto Sans KR", sans-serif';
-    ctx.fillStyle = textColor;
-    ctx.globalAlpha = 0.5;
-    ctx.textAlign = 'right';
-    ctx.fillText(`#${q.category}`, W - 100, 100);
-    ctx.globalAlpha = 1.0;
-
-    // Branding
-    ctx.font = '400 24px "Noto Sans KR", sans-serif';
-    ctx.fillStyle = textColor;
-    ctx.globalAlpha = 0.4;
-    ctx.textAlign = 'center';
-    ctx.fillText('명언의 정원 | jasper-adsense-test.pages.dev', W / 2, H - 100);
+    ctx.globalAlpha = 1;
 }
 
 // ===== AD UNIT COMPONENT =====
