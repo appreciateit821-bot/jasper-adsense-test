@@ -38,19 +38,19 @@
 ## **Current Development Plan: The Bookmark Update**
 
 ### **Step 1: UI Redesign (The Bookmark Aesthetic)**
-- [ ] Update `.quote-card` in `style.css` with a vertical bookmark layout.
-- [ ] Add decorative elements like a notch or ribbon at the top of the card.
-- [ ] Implement premium textures and multi-layered shadows.
-- [ ] Enhance typography with varied font weights and expressive sizes.
+- [x] Update `.quote-card` in `style.css` with a vertical bookmark layout.
+- [x] Add decorative elements like a notch or ribbon at the top of the card.
+- [x] Implement premium textures and multi-layered shadows.
+- [x] Enhance typography with varied font weights and expressive sizes.
 
 ### **Step 2: KakaoTalk & Instagram Integration**
-- [ ] Integrate Kakao SDK in `index.html`.
-- [ ] Replace X (Twitter) sharing button with a KakaoTalk sharing button in `main.js`.
-- [ ] Update the Image Card Generator in `main.js` to create even more beautiful "bookmark" style images.
-- [ ] Ensure the generated images are optimized for Instagram's aspect ratios.
+- [x] Integrate Kakao SDK in `index.html`.
+- [x] Replace X (Twitter) sharing button with a KakaoTalk sharing button in `main.js`.
+- [x] Update the Image Card Generator in `main.js` to create even more beautiful "bookmark" style images.
+- [x] Ensure the generated images are optimized for Instagram's aspect ratios.
 
 ### **Step 3: Verification & Polishing**
-- [ ] Verify Kakao sharing functionality on mobile devices.
-- [ ] Test the Image Card Generator across different browsers.
-- [ ] Audit the mobile responsiveness of the new bookmark cards.
-- [ ] Ensure SEO structured data remains accurate.
+- [x] Verify Kakao sharing functionality on mobile devices.
+- [x] Test the Image Card Generator across different browsers.
+- [x] Audit the mobile responsiveness of the new bookmark cards.
+- [x] Ensure SEO structured data remains accurate.
