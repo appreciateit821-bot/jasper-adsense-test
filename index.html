@@ -37,7 +37,7 @@
 <body>
     <header class="site-header">
         <div class="container header-inner">
-            <a href="/" class="logo">재스퍼의 명언 모음집</a>
+            <a href="/" class="logo">재스퍼의 <span>명언</span> 모음집</a>
             <nav class="main-nav" aria-label="주요 네비게이션">
                 <ul>
                     <li><a href="#daily">오늘의 명언</a></li>
@@ -79,7 +79,10 @@
 
             <section class="categories-section" id="categories" aria-label="카테고리별 명언">
                 <div class="container">
-                    <h2 class="section-title">테마별 탐색</h2>
+                    <div class="section-header">
+                        <h2 class="section-title">테마별 <span class="accent">탐색</span></h2>
+                        <p class="section-desc">삶의 다양한 주제에서 영감을 찾아보세요.</p>
+                    </div>
                     <div class="category-tabs" id="categoryTabs" role="tablist"></div>
                     <div class="quotes-grid" id="categoryQuotes" role="tabpanel"></div>
                 </div>
@@ -87,15 +90,19 @@
 
             <section class="people-section" id="people" aria-label="인물별 명언">
                 <div class="container">
-                    <h2 class="section-title">인물별 탐색</h2>
-                    <p class="section-desc">리더, 사상가, 예술가들의 지혜를 만나보세요.</p>
+                    <div class="section-header">
+                        <h2 class="section-title">인물별 <span class="accent">탐색</span></h2>
+                        <p class="section-desc">위인, 사상가, 예술가들의 지혜를 만나보세요.</p>
+                    </div>
                     <div class="people-grid" id="peopleGrid"></div>
                 </div>
             </section>
 
             <section class="all-quotes-section" id="allQuotes" aria-label="전체 명언">
                 <div class="container">
-                    <h2 class="section-title">모든 명언 보기</h2>
+                    <div class="section-header">
+                        <h2 class="section-title">모든 <span class="accent">명언</span> 보기</h2>
+                    </div>
                     <div class="quotes-masonry" id="allQuotesGrid"></div>
                     <button class="btn-load-more" id="loadMoreBtn">더 보기</button>
                 </div>
@@ -115,8 +122,8 @@
     <footer class="site-footer">
         <div class="container">
             <div class="footer-bottom">
-                <p>&copy; 2024 재스퍼의 명언 모음집. All rights reserved.</p>
-                <p><a href="#">개인정보처리방침</a> | <a href="#">이용약관</a></p>
+                <p>&copy; 2025 재스퍼의 명언 모음집. All rights reserved.</p>
+                <p><a href="privacy.html">개인정보처리방침</a> &nbsp;|&nbsp; <a href="terms.html">이용약관</a></p>
             </div>
         </div>
     </footer>

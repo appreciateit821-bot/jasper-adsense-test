@@ -437,9 +437,11 @@ function renderPeopleGrid() {
         card.className = 'person-card';
         card.innerHTML = `
             <div class="person-avatar">${getInitials(p.name)}</div>
-            <div class="person-name">${p.name}</div>
-            <div class="person-title">${p.desc}</div>
-            <div class="person-count">명언 ${p.count}개</div>
+            <div class="person-info">
+                <div class="person-name">${p.name}</div>
+                <div class="person-title">${p.desc}</div>
+                <div class="person-count">${p.count}개</div>
+            </div>
         `;
         card.addEventListener('click', () => showPersonQuotes(p));
         if (p.wiki) {
