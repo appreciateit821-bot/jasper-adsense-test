@@ -200,7 +200,7 @@ function getUniquePeople() {
             map.get(q.author).count++;
         }
     });
-    return [...map.values()].sort((a, b) => b.count - a.count);
+    return shuffleArray([...map.values()]);
 }
 
 const imageCache = {};
@@ -420,7 +420,7 @@ function showCategoryQuotesView(cat) {
     const container = document.getElementById('categoryQuotes');
     container.style.display = 'grid';
     container.innerHTML = '';
-    const categoryQuotes = quotes.filter(q => q.category === cat);
+    const categoryQuotes = shuffleArray(quotes.filter(q => q.category === cat));
     categoryQuotes.forEach(q => {
         const card = document.createElement('quote-card');
         card.quoteData = q;
