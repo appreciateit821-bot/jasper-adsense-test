@@ -1,4 +1,12 @@
 User-agent: *
 Allow: /
 
+# Naver Search Bot
+User-agent: Yeti
+Allow: /
+
+# Google Search Bot
+User-agent: Googlebot
+Allow: /
+
 Sitemap: https://jasper-adsense-test.pages.dev/sitemap.xml

@@ -18,7 +18,7 @@ console.log(`✅ Loaded: ${Object.keys(people).length} people, ${quotes.length} 
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 const BASE = 'https://jasper-adsense-test.pages.dev';
-const TODAY = '2026-02-26';
+const TODAY = '2026-03-14';
 
 // ── Category editorial content ──────────────────────────────────────────────
 const CATEGORY_CONTENT = {
@@ -344,16 +344,22 @@ function pageHead({ title, desc, url, keywords }) {
 <title>${escHtml(title)}</title>
 <meta name="description" content="${escHtml(desc)}">
 <meta name="keywords" content="${escHtml(keywords)}">
+<meta name="author" content="명언의 정원 편집부">
+<meta name="robots" content="index, follow">
 <meta name="google-adsense-account" content="ca-pub-5029784324732715">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="canonical" href="${BASE}/${url}">
 <link rel="sitemap" type="application/xml" href="/sitemap.xml">
-<meta property="og:type" content="website">
+<link rel="alternate" hreflang="ko" href="${BASE}/${url}">
+<meta property="og:type" content="article">
 <meta property="og:title" content="${escHtml(title)}">
 <meta property="og:description" content="${escHtml(desc)}">
 <meta property="og:url" content="${BASE}/${url}">
 <meta property="og:site_name" content="명언의 정원">
 <meta property="og:locale" content="ko_KR">
+<meta property="article:published_time" content="${TODAY}">
+<meta property="article:modified_time" content="${TODAY}">
+<meta property="article:author" content="명언의 정원 편집부">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="${escHtml(title)}">
 <meta name="twitter:description" content="${escHtml(desc)}">
@@ -922,6 +928,7 @@ if (!cssContent.includes('static-quote-item')) {
 const baseUrls = [
     { url: '', priority: '1.0', changefreq: 'daily' },
     { url: 'about.html', priority: '0.8', changefreq: 'monthly' },
+    { url: '명언이란-무엇인가.html', priority: '0.8', changefreq: 'monthly' },
     { url: 'privacy.html', priority: '0.5', changefreq: 'yearly' },
     { url: 'terms.html', priority: '0.5', changefreq: 'yearly' },
 ];
