@@ -363,9 +363,9 @@ function pageHead({ title, desc, url, keywords }) {
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="${escHtml(title)}">
 <meta name="twitter:description" content="${escHtml(desc)}">
-<link rel="stylesheet" href="style.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js" integrity="sha384-l68Y9yH67iXU/lO62nUoD5AUnqUa6D3pS5H79D7aUfXpYn6X6Y/fK68Y9yH67iXU" crossorigin="anonymous"></script>
 <!-- Google tag (gtag.js) -->
@@ -469,6 +469,7 @@ ${headerHtml(cat)}
             </nav>
             <h1>${escHtml(cat)} 명언 모음 ${catQuotes.length}선</h1>
             <p class="static-hero-desc">감동적인 ${escHtml(cat)}에 관한 명언을 해설과 함께 만나보세요. ${escHtml(topAuthors)} 등 역사 속 위인들의 지혜를 모았습니다.</p>
+            <p class="page-updated"><time datetime="${TODAY}">최종 업데이트: ${TODAY.replace(/-/g, '.')}</time></p>
         </div>
     </section>
 
@@ -583,6 +584,7 @@ ${headerHtml()}
             <h1>${escHtml(author)} 명언 모음</h1>
             <p class="static-hero-subdesc">${escHtml(nameEn)} · ${escHtml(desc)}</p>
             ${p.bio ? `<p class="static-author-bio">${escHtml(p.bio)}</p>` : ''}
+            <p class="page-updated"><time datetime="${TODAY}">최종 업데이트: ${TODAY.replace(/-/g, '.')}</time></p>
         </div>
     </section>
 

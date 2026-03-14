@@ -998,6 +998,11 @@ img { display: block; max-width: 100%; }
     max-width: 640px;
     line-height: 1.6;
 }
+.page-updated {
+    font-size: 0.78rem;
+    opacity: 0.6;
+    margin-top: 0.75rem;
+}
 .static-author-bio {
     font-size: 0.9rem;
     opacity: 0.85;

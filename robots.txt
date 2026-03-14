@@ -1,12 +1,17 @@
 User-agent: *
 Allow: /
+Allow: /style.css
+Allow: /main.js
+Allow: /favicon.svg
 
 # Naver Search Bot
 User-agent: Yeti
 Allow: /
 
-# Google Search Bot
+# Google Search Bot (explicit CSS/JS access for rendering)
 User-agent: Googlebot
 Allow: /
+Allow: /style.css
+Allow: /main.js
 
 Sitemap: https://jasper-adsense-test.pages.dev/sitemap.xml
