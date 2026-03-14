@@ -4,16 +4,16 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-// ── Load data from main.js ──────────────────────────────────────────────────
-const mainJs = fs.readFileSync(path.join(__dirname, 'main.js'), 'utf-8');
-const dataEnd = mainJs.indexOf('// ===== UNIQUE PEOPLE =====');
-if (dataEnd === -1) { console.error('Could not find data section'); process.exit(1); }
-const dataScript = mainJs.substring(0, dataEnd).replace(/\bconst\b/g, 'var').replace(/\blet\b/g, 'var');
-
-const loadData = new Function(
-    dataScript + '\nvar categories = [...new Set(quotes.map(function(q){return q.category;}))]; return { people: people, quotes: quotes, categories: categories };'
-);
-const { people, quotes, categories } = loadData();
+// ── Load data from data/ directory ──────────────────────────────────────────
+function loadExportFile(filePath) {
+    const src = fs.readFileSync(filePath, 'utf-8');
+    const script = src.replace(/^export\s+const\s+/m, 'var ').replace(/\bexport\s+/g, '');
+    const fn = new Function(script + '\nreturn ' + (src.match(/^export const (\w+)/m) || [])[1] + ';');
+    return fn();
+}
+const people = loadExportFile(path.join(__dirname, 'data/people.js'));
+const quotes = loadExportFile(path.join(__dirname, 'data/quotes.js'));
+const categories = [...new Set(quotes.map(q => q.category))];
 console.log(`✅ Loaded: ${Object.keys(people).length} people, ${quotes.length} quotes, ${categories.length} categories`);
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -345,6 +345,7 @@ function pageHead({ title, desc, url, keywords }) {
 <meta name="description" content="${escHtml(desc)}">
 <meta name="keywords" content="${escHtml(keywords)}">
 <meta name="google-adsense-account" content="ca-pub-5029784324732715">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="canonical" href="${BASE}/${url}">
 <link rel="sitemap" type="application/xml" href="/sitemap.xml">
 <meta property="og:type" content="website">
