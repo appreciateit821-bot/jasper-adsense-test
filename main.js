@@ -126,25 +126,135 @@ function showSingleQuote(q) {
 
 
 // ===== HERO BACKGROUNDS =====
-const HERO_IMAGES = [
-    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&q=80',  // mountains
-    'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1600&q=80',  // stars
-    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&q=80',  // portrait
-    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&q=80',  // forest path
-    'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1600&q=80',  // night mountain
-    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1600&q=80',  // laptop
-    'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1600&q=80',  // paris
-    'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600&q=80',  // ocean
-    'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1600&q=80',  // kyoto
-    'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=80',  // forest
-];
-let _lastHeroIdx = -1;
+// 키워드 → Unsplash 이미지 매핑 (quote.keyword 기반 동적 변경)
+const KEYWORD_IMAGE_MAP = {
+    // 자연/풍경
+    'mountain': 'photo-1506905925346-21bda4d32df4',
+    'mountains': 'photo-1506905925346-21bda4d32df4',
+    'stars': 'photo-1419242902214-272b3f66ee7a',
+    'night sky': 'photo-1419242902214-272b3f66ee7a',
+    'stars dreaming': 'photo-1419242902214-272b3f66ee7a',
+    'forest': 'photo-1464822759023-fed622ff2c3b',
+    'forest path': 'photo-1441974231531-c6227db76b6e',
+    'nature': 'photo-1441974231531-c6227db76b6e',
+    'ocean': 'photo-1507525428034-b723cf961d3e',
+    'ocean boat': 'photo-1507525428034-b723cf961d3e',
+    'river': 'photo-1500534314209-a25ddb2bd429',
+    'flowing river': 'photo-1500534314209-a25ddb2bd429',
+    'river flowing change': 'photo-1500534314209-a25ddb2bd429',
+    'sunrise': 'photo-1506905925346-21bda4d32df4',
+    'sunrise alive': 'photo-1494548162494-384bba4ab999',
+    'golden sunset': 'photo-1495616811223-4d98c6e9c869',
+    'sunshine field': 'photo-1495616811223-4d98c6e9c869',
+    'dark before dawn': 'photo-1489824904134-891ab64532f1',
+    'zen garden': 'photo-1528360983277-13d401cdc186',
+    'desert': 'photo-1509316785289-025f5b846b35',
+    'desert planet': 'photo-1509316785289-025f5b846b35',
+    'desert storm': 'photo-1509316785289-025f5b846b35',
+    // 도시/건축
+    'paris': 'photo-1502602898657-3e91760cbb34',
+    'city lights romance': 'photo-1502602898657-3e91760cbb34',
+    'city of stars': 'photo-1502602898657-3e91760cbb34',
+    'kyoto': 'photo-1528360983277-13d401cdc186',
+    'new york': 'photo-1485871981521-5b1fd3805eee',
+    'newyork': 'photo-1485871981521-5b1fd3805eee',
+    'seoul night': 'photo-1538485399081-7191377e8241',
+    // 사람/감정
+    'portrait': 'photo-1507003211169-0a1dd7228f2d',
+    'hope sunrise': 'photo-1494548162494-384bba4ab999',
+    'smile portrait': 'photo-1531746020798-e6953c6e8e04',
+    'inner peace meditation': 'photo-1506126613408-eca07ce68773',
+    'gratitude journal': 'photo-1484480974693-6ca0a78fb36b',
+    'laughter joy': 'photo-1531746020798-e6953c6e8e04',
+    // 우주/과학
+    'space travel': 'photo-1446776811953-b23d57bd21aa',
+    'space alone': 'photo-1446776811953-b23d57bd21aa',
+    'galaxy': 'photo-1446776811953-b23d57bd21aa',
+    'cosmic': 'photo-1446776811953-b23d57bd21aa',
+    'stars universe cosmic': 'photo-1446776811953-b23d57bd21aa',
+    // 비즈니스/성공
+    'technology': 'photo-1498050108023-c5249f4df085',
+    'laptop': 'photo-1498050108023-c5249f4df085',
+    'lightbulb': 'photo-1573164713988-8665fc963095',
+    'stock chart': 'photo-1611974789855-9c2a0a7236a3',
+    'wall street': 'photo-1611974789855-9c2a0a7236a3',
+    'money': 'photo-1579621970563-ebec7560ff3e',
+    'hard work grind': 'photo-1534528741775-53994a69daeb',
+    'morning routine habit': 'photo-1484480974693-6ca0a78fb36b',
+    // 사랑/관계
+    'hearts': 'photo-1518199266791-5375a83190b7',
+    'rose': 'photo-1518199266791-5375a83190b7',
+    'love': 'photo-1518199266791-5375a83190b7',
+    'couple walking': 'photo-1500051638674-ff996a0c29be',
+    'sunlight hands': 'photo-1518199266791-5375a83190b7',
+    // 책/배움
+    'stacked books': 'photo-1481627834876-b7833e8f5570',
+    'open book': 'photo-1481627834876-b7833e8f5570',
+    'old library': 'photo-1481627834876-b7833e8f5570',
+    'cozy reading': 'photo-1481627834876-b7833e8f5570',
+    'library': 'photo-1481627834876-b7833e8f5570',
+    // 예술/창의성
+    'painting canvas': 'photo-1460661419201-fd4cecdf8a8b',
+    'artist studio': 'photo-1460661419201-fd4cecdf8a8b',
+    'child drawing': 'photo-1574169208507-84376144848b',
+    'connecting dots': 'photo-1454165804606-c3d57bc86b40',
+    // 여정/변화
+    'winding road': 'photo-1506905925346-21bda4d32df4',
+    'journey road': 'photo-1446800431578-c7b3df4c25c1',
+    'first step staircase': 'photo-1449965408869-eaa3f722e40d',
+    'butterfly metamorphosis': 'photo-1444927714506-8492d94b4e3d',
+    // 동물/자연물
+    'lion': 'photo-1546182990-dffeafbe841d',
+    'ship ocean': 'photo-1507525428034-b723cf961d3e',
+    'rocket launch': 'photo-1446776811953-b23d57bd21aa',
+    // 특수
+    'savanna': 'photo-1516026672322-bc52d61a55d5',
+    'chocolate box': 'photo-1511381939415-e44b4f01db5e',
+    'dark city': 'photo-1489824904134-891ab64532f1',
+    'magic castle': 'photo-1516450360452-9312f5e86fc7',
+    'stage spotlight': 'photo-1514525253161-7a46d19cd819',
+    'hourglass sand': 'photo-1495316364083-b5916626072e',
+    'clock face': 'photo-1495316364083-b5916626072e',
+    'present moment': 'photo-1495616811223-4d98c6e9c869',
+};
 
-async function getHeroImage() {
-    let idx;
-    do { idx = Math.floor(Math.random() * HERO_IMAGES.length); } while (idx === _lastHeroIdx && HERO_IMAGES.length > 1);
-    _lastHeroIdx = idx;
-    return HERO_IMAGES[idx];
+// 기본 폴백 이미지
+const HERO_FALLBACK = [
+    'photo-1506905925346-21bda4d32df4',  // mountains
+    'photo-1419242902214-272b3f66ee7a',  // stars
+    'photo-1441974231531-c6227db76b6e',  // forest path
+    'photo-1519681393784-d120267933ba',  // night mountain
+    'photo-1502602898657-3e91760cbb34',  // paris
+    'photo-1507525428034-b723cf961d3e',  // ocean
+    'photo-1528360983277-13d401cdc186',  // kyoto
+    'photo-1464822759023-fed622ff2c3b',  // forest
+    'photo-1446776811953-b23d57bd21aa',  // space
+    'photo-1481627834876-b7833e8f5570',  // books
+];
+let _lastHeroPhotoId = '';
+
+function getHeroImageUrl(keyword) {
+    // 키워드로 매핑된 이미지 찾기
+    if (keyword) {
+        const lowerKey = keyword.toLowerCase();
+        // 정확한 매핑 우선
+        if (KEYWORD_IMAGE_MAP[lowerKey]) {
+            return `https://images.unsplash.com/${KEYWORD_IMAGE_MAP[lowerKey]}?w=1600&q=80`;
+        }
+        // 부분 키워드 매핑
+        for (const [mapKey, photoId] of Object.entries(KEYWORD_IMAGE_MAP)) {
+            if (lowerKey.includes(mapKey) || mapKey.includes(lowerKey.split(' ')[0])) {
+                return `https://images.unsplash.com/${photoId}?w=1600&q=80`;
+            }
+        }
+    }
+    // 폴백: 랜덤 이미지
+    let photoId;
+    do {
+        photoId = HERO_FALLBACK[Math.floor(Math.random() * HERO_FALLBACK.length)];
+    } while (photoId === _lastHeroPhotoId && HERO_FALLBACK.length > 1);
+    _lastHeroPhotoId = photoId;
+    return `https://images.unsplash.com/${photoId}?w=1600&q=80`;
 }
 
 // ===== IMAGE CARD GENERATOR FONTS & OPTIONS =====
@@ -268,11 +378,17 @@ async function showDailyQuote() {
 
     if (bgEl) {
         bgEl.style.opacity = '0';
-        const imgUrl = await getHeroImage();
+        const imgUrl = getHeroImageUrl(q.keyword);
         const img = new Image();
         img.onload = () => {
             bgEl.style.backgroundImage = `url(${imgUrl})`;
-            bgEl.style.opacity = '0.7'; // Updated opacity
+            bgEl.style.opacity = '0.7';
+        };
+        img.onerror = () => {
+            // 이미지 로드 실패시 폴백
+            const fallbackUrl = getHeroImageUrl(null);
+            bgEl.style.backgroundImage = `url(${fallbackUrl})`;
+            bgEl.style.opacity = '0.7';
         };
         img.src = imgUrl;
     }
@@ -488,6 +604,7 @@ function showPersonQuotes(person) {
 let allQuotesPage = 0;
 const QUOTES_PER_PAGE = 12;
 let shuffledQuotes = [];
+let _autoLoadObserver = null;
 
 function renderAllQuotes(loadMore = false) {
     const container = document.getElementById('allQuotesGrid');
@@ -497,24 +614,48 @@ function renderAllQuotes(loadMore = false) {
         shuffledQuotes = shuffleArray(quotes);
         allQuotesPage = 0;
         container.innerHTML = '';
+        // 기존 옵저버 해제
+        if (_autoLoadObserver) { _autoLoadObserver.disconnect(); _autoLoadObserver = null; }
     }
-    
+
     const start = allQuotesPage * QUOTES_PER_PAGE;
     const end = start + QUOTES_PER_PAGE;
     const slice = shuffledQuotes.slice(start, end);
-    
+
+    // DocumentFragment로 DOM 조작 최소화
+    const fragment = document.createDocumentFragment();
     slice.forEach(q => {
         const card = document.createElement('quote-card');
         card.quoteData = q;
-        container.appendChild(card);
+        fragment.appendChild(card);
     });
-    
+    container.appendChild(fragment);
+
     allQuotesPage++;
-    
+
     const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const hasMore = end < shuffledQuotes.length;
+
     if (loadMoreBtn) {
-        loadMoreBtn.style.display = end >= shuffledQuotes.length ? 'none' : 'block';
+        loadMoreBtn.style.display = hasMore ? 'block' : 'none';
     }
+
+    // IntersectionObserver로 자동 로드 (loadMoreBtn이 화면에 들어오면 자동으로 더 로드)
+    if (hasMore && loadMoreBtn && !loadMore) {
+        _setupAutoLoad(loadMoreBtn);
+    }
+}
+
+function _setupAutoLoad(triggerEl) {
+    if (_autoLoadObserver) _autoLoadObserver.disconnect();
+    _autoLoadObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                renderAllQuotes(true);
+            }
+        });
+    }, { rootMargin: '200px' });
+    _autoLoadObserver.observe(triggerEl);
 }
 
 function shareToKakao(q) {
